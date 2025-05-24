@@ -1,40 +1,49 @@
 package com.psclub.backend.controller;
 
-import com.psclub.backend.model.Booking;
-import com.psclub.backend.service.BookingService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
 @RestController
-@RequestMapping("/api/bookings")
-@CrossOrigin
+@RequestMapping("/api/booking")
+@CrossOrigin(origins = "http://localhost:3000") // Разрешаем запросы с React frontend
 public class BookingController {
 
-    private final BookingService service;
-
-    public BookingController(BookingService service) {
-        this.service = service;
-    }
-
     @PostMapping
-    public Booking create(@RequestBody Map<String, String> request) {
-        Long userId = Long.parseLong(request.get("userId"));
-        Long zoneId = Long.parseLong(request.get("zoneId"));
-        LocalDateTime start = LocalDateTime.parse(request.get("startTime"));
-        LocalDateTime end = LocalDateTime.parse(request.get("endTime"));
-        return service.createBooking(userId, zoneId, start, end);
+    public ResponseEntity<String> bookPlace(@RequestBody BookingRequest booking) {
+        // Здесь можно добавить логику сохранения в базу или другую обработку
+        System.out.println("Новая заявка на бронирование:");
+        System.out.println("Имя: " + booking.getName());
+        System.out.println("Телефон: " + booking.getPhone());
+        System.out.println("Дата: " + booking.getDate());
+
+        return ResponseEntity.ok("Бронирование принято");
     }
 
-    @GetMapping("/user/{userId}")
-    public List<Booking> getByUser(@PathVariable Long userId) {
-        return service.getByUser(userId);
-    }
+    // Класс для приёма JSON данных
+    public static class BookingRequest {
+        private String name;
+        private String phone;
+        private String date;
 
-    @GetMapping
-    public List<Booking> getAll() {
-        return service.getAll();
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getDate() {
+            return date;
+        }
+        public void setDate(String date) {
+            this.date = date;
+        }
     }
 }
